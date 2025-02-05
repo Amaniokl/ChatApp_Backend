@@ -5,7 +5,7 @@ const asyncHandler=(requestHandler)=>{
         .catch((err)=>next(err))
     }
 }
-export {asyncHandler}
+export default asyncHandler
 
 //using async await 
 
