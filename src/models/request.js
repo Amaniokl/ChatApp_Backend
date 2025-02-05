@@ -24,4 +24,4 @@ const schema = new Schema(
   }
 );
 
-export const Request = mongoose.models.Request || model("Request", schema);
+export const Request = mongoose.model("Request", schema);
