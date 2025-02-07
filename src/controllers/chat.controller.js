@@ -9,6 +9,7 @@ import { User } from "../models/user.js";
 import { Message } from "../models/message.js";
 import { uploadOnCloudinary } from "../utils/cloudinary.js";
 import { NEW_MESSAGE, NEW_ATTACHMENT, NEW_MESSAGE_ALERT } from "../constants/events.js";
+import { deleteFilesFromCloudinary } from "../utils/cloudinary.js";
 
 const newGroupChat = asyncHandler(async (req, res) => {
     const { name, members } = req.body;
@@ -261,13 +262,13 @@ const leaveGroup = asyncHandler(async (req, res) => {
     if (!chat.groupChat) throw new ApiError(400, "This is not a group chat");
 
     const remainingMembers = chat.members.filter(
-        (member) => member.toString() !== req.user._id.toString()
+        (member) => member.toString() !== userId
     );
 
     if (remainingMembers.length < 3)
         throw new ApiError(400, "Group must have at least 3 members");
 
-    if (chat.creator.toString() === req.user._id.toString()) {
+    if (chat.creator.toString() === userId) {
         throw new ApiError(400, "You can not leave the group as you are creator of the group")
     }
 
@@ -432,8 +433,8 @@ const deleteChat = asyncHandler(async (req, res) => {
         attachments.forEach(({ public_id }) => public_ids.push(public_id))
     );
 
-    await Promise.all([
-        deletFilesFromCloudinary(public_ids),
+    const deleted=await Promise.all([
+        deleteFilesFromCloudinary(public_ids),
         chat.deleteOne(),
         Message.deleteMany({ chat: chatId }),
     ]);
@@ -442,6 +443,7 @@ const deleteChat = asyncHandler(async (req, res) => {
 
     return res.status(200).json({
         success: true,
+        deleted,
         message: "Chat deleted successfully",
     });
 });
@@ -458,7 +460,7 @@ const getMessages = asyncHandler(async (req, res) => {
 
     if (!chat) throw new ApiError(404, "Chat not found");
 
-    if (!chat.members.includes(req.user.toString()))
+    if (!chat.members.includes(req.user._id.toString()))
         throw new ApiError(403, "You are not allowed to access this chat");
 
     const [messages, totalMessagesCount] = await Promise.all([
@@ -466,7 +468,7 @@ const getMessages = asyncHandler(async (req, res) => {
             .sort({ createdAt: -1 })
             .skip(skip)
             .limit(resultPerPage)
-            .populate("sender", "name")
+            .populate("sender", "fullName")
             .lean(),
         Message.countDocuments({ chat: chatId }),
     ]);
@@ -484,5 +486,5 @@ const getMessages = asyncHandler(async (req, res) => {
 
 export {
     newGroupChat, getMyChats, getChatDetails, getMyGroups, addMembers, removeMember, leaveGroup, sendAttachments,
-    renameGroup, deleteChat
+    renameGroup, deleteChat, getMessages
 };
