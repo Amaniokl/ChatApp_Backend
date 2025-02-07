@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import express from "express"
 import { 
     registerUser, 
     loginUser, 
@@ -10,17 +11,14 @@ import {
     updateUserAvatar
 } from "../controllers/user.controller.js"
 
-import { upload } from "../middlewares/multer.middleware.js";
-import { verifyJWT } from "../middlewares/auth.middleware.js";
+import { upload } from "../middlewares/multer.js";
+import { verifyJWT } from "../middlewares/auth.js";
 
 const router = express.Router();
 
 // Route for user registration
 router.route("/register").post(
-    upload.fields([
-        { name: "avatar", maxCount: 1 },
-        { name: "coverImage", maxCount: 1 }
-    ]),
+    upload.single('avatar'),
     registerUser
 );
 
@@ -51,4 +49,4 @@ router.route("/update-avatar").patch(
     updateUserAvatar
 );
 
-export default router;
+export {router};
