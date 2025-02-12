@@ -99,7 +99,7 @@ const registerUser = asyncHandler(async (req, res) => {
 const loginUser = asyncHandler(async (req, res) => {
     //recieve data from body
     const { username, password } = req.body
-    console.log(req.body);
+    // console.log(req.body);
 
     //validate username and password
     if (!username || !password) {
