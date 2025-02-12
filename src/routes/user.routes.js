@@ -1,15 +1,19 @@
-import mongoose from "mongoose";
-import express from "express"
-import { 
-    registerUser, 
-    loginUser, 
-    logoutUser, 
-    refreshAccessToken, 
-    changeCurrentPassword, 
-    getCurrentUser, 
+import express from 'express';
+import {
+    registerUser,
+    loginUser,
+    logoutUser,
+    refreshAccessToken,
+    changeCurrentPassword,
+    getCurrentUser,
     updateAccountDetails,
-    updateUserAvatar
-} from "../controllers/user.controller.js"
+    updateUserAvatar,
+    searchUser,
+    sendFriendRequest,
+    acceptFriendRequest,
+    getMyNotifications,
+    getMyFriends
+} from '../controllers/user.controller.js';
 
 import { upload } from "../middlewares/multer.js";
 import { verifyJWT } from "../middlewares/auth.js";
@@ -48,5 +52,19 @@ router.route("/update-avatar").patch(
     upload.single("avatar"),
     updateUserAvatar
 );
+
+router.route('/search').get(searchUser);
+
+// Send Friend Request
+router.route('/friend-request/send').post(sendFriendRequest);
+
+// Accept Friend Request
+router.route('/friend-request/accept').post(acceptFriendRequest);
+
+// Get My Notifications
+router.route('/notifications').get(getMyNotifications);
+
+// Get My Friends
+router.route('/friends').get(getMyFriends);
 
 export {router};
