@@ -31,7 +31,7 @@ This project provides the backend infrastructure for a real-time social chat app
 *   **dotenv:** To read environment variables from `.env`
 
 ## File Structure
-
+```
 📦 backend/
 ├── 📁 config/
 │   └── 📄 db.js                # MongoDB connection setup
@@ -60,7 +60,7 @@ This project provides the backend infrastructure for a real-time social chat app
 ├── 📄 .env                    # Environment variables
 ├── 📄 package.json             # Project dependencies and scripts
 └── 📄 .gitignore               # Files to ignore in Git
-
+```
 *   **`config/db.js`**: Establishes and manages the MongoDB database connection using Mongoose.
 *   **`controllers/`**: Contains the business logic for handling requests and interacting with the models.
 *   **`middlewares/`**: Contains middleware functions such as JWT authentication (`auth.js`) and file upload handling (`multer.js`).
